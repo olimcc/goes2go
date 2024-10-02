@@ -140,7 +140,10 @@ def _goes_file_df(satellite, product, start, end, bands=None, refresh=True):
     # ----------------------------
     files = []
     for DATE in DATES:
-        files += fs.ls(f"{satellite}/{product}/{DATE:%Y/%j/%H/}", refresh=refresh)
+        try:
+            files += fs.ls(f"{satellite}/{product}/{DATE:%Y/%j/%H/}", refresh=refresh)
+        except FileNotFoundError:
+            continue
 
     # Build a table of the files
     # --------------------------
@@ -426,7 +429,7 @@ def goes_timerange(
 def _preprocess_single_point(ds, target_lat, target_lon, decimal_coordinates=True):
     """
     Preprocessing function to select only the single relevant data subset.
-    
+
     Parameters
     ----------
     ds: xarray Dataset
